@@ -95,7 +95,7 @@
     });
 
     stopLoop.addEventListener('click', () => {
-      ws.send(JSON.stringify({ type: 'stop_current_text' }));
+      ws.send(JSON.stringify({ type: 'stop_loop' }));
     });
 
     clearDisplay.addEventListener('click', () => {
