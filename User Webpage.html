@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controller</title>
+  <style>
+    body {
+      background-color: #36393f;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    #input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+    }
+    #input-text {
+      flex: 1;
+      height: calc(100vh - 150px);
+      width: 100%;
+      max-width: 100%;
+      background-color: #202225;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      font-size: 18px;
+    }
+    #submit-text {
+      height: 100px;
+      width: 100%;
+      max-width: 100%;
+      background-color: #7289da;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 24px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="input-container">
+    <textarea id="input-text"></textarea>
+    <button id="submit-text">Submit</button>
+  </div>
+  <script>
+    const inputText = document.getElementById('input-text');
+    const submitText = document.getElementById('submit-text');
+
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.addEventListener('open', () => {
+      ws.send(JSON.stringify({ type: 'register', role: 'controller' }));
+    });
+
+    submitText.addEventListener('click', () => {
+      ws.send(JSON.stringify({ type: 'text', text: inputText.value }));
+    });
+  </script>
+</body>
+</html>

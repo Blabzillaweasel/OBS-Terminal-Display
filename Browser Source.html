@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Animation</title>
+<style>
+  body {
+    background-color: transparent;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #text-container, #cursor {
+    font-family: Consolas, monospace;
+    white-space: pre-wrap;
+    font-size: 24px;
+    line-height: 1.2;
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  #cursor {
+    animation: blink 1s step-start infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="text-container"></div>
+<div id="cursor">█</div>
+<script>
+  const lineHeight = 1.2;
+  const fontSize = 24;
+
+  const textContainer = document.getElementById('text-container');
+  const cursorElement = document.getElementById('cursor');
+
+  let currentText = '';
+  let currentIndex = 0;
+  let animationInterval;
+  let previousText = '';
+
+// updateText function version 1.2.2
+function updateText() {
+  if (currentIndex <= textPrompt.length) {
+    currentText = previousText + textPrompt.slice(0, currentIndex);
+    if (currentIndex === 0 && previousText === '') {
+      currentText = '\u200B' + currentText;
+    }
+    textContainer.innerHTML = currentText;
+    currentIndex++;
+  }
+
+  // Update cursor position after text update with a slight delay
+  setTimeout(() => {
+    requestAnimationFrame(updateCursorPosition);
+  }, 0);
+}
+
+
+// updateCursorPosition function version 1.1.1
+function updateCursorPosition() {
+  const range = document.createRange();
+  const node = textContainer.childNodes[textContainer.childNodes.length - 1] || textContainer;
+  const nodeContentLength = node.textContent ? node.textContent.length : 0;
+  const startPosition = (nodeContentLength === 1 && node.textContent.charCodeAt(0) === 8203) ? 1 : nodeContentLength;
+  range.setStart(node, startPosition);
+  range.collapse(true);
+  const cursorRect = range.getBoundingClientRect();
+
+  // If the cursor position is not updated properly, call updateCursorPosition again
+  if (cursorRect.left === 0 && cursorRect.top === 0 && textContainer.innerHTML.length > 0) {
+    setTimeout(() => {
+      requestAnimationFrame(updateCursorPosition);
+    }, 0);
+  } else {
+    cursorElement.style.top = cursorRect.top + 'px';
+    cursorElement.style.left = cursorRect.left + 'px';
+
+    // Scroll the text when it reaches the lower boundary
+    if (cursorRect.bottom >= window.innerHeight) {
+      textContainer.style.top = parseInt(textContainer.style.top || 0) - fontSize * lineHeight + 'px';
+    }
+  }
+}
+
+
+//startAnimation function version 1.0.0
+  function startAnimation() {
+    if (!animationInterval) {
+      animationInterval = setInterval(updateText, 50); // Adjust this value to control the typing speed
+    }
+  }
+  
+//stopAnimation function version 1.0.0
+  function stopAnimation() {
+    if (animationInterval) {
+      clearInterval(animationInterval);
+      animationInterval = null;
+      currentIndex = 0;
+    }
+  }
+
+// WebSocket version 1.0.1
+const ws = new WebSocket('ws://localhost:8080');
+
+ws.addEventListener('open', () => {
+  ws.send(JSON.stringify({ type: 'register', role: 'display' }));
+});
+
+// WebSocket listener version 1.0.8
+ws.addEventListener('message', (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === 'text') {
+    if (currentText !== '') {
+      previousText = currentText + '\n\n'; // Add an additional line break between prompts
+    }
+    textPrompt = data.text.replace(/<(?!br)/gi, '<\u200B'); // Add a zero-width space after '<' symbols in the text, except for '<br>'
+    textPrompt = textPrompt.replace(/<br\s*\/?>/gi, '\n'); // Replace <br> and <br/> tags with newline characters
+    currentIndex = 0;
+  }
+});
+
+
+
+//fetchTextPrompt function version 1.0.0
+async function fetchTextPrompt() {
+  return new Promise((resolve) => {
+    ws.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'text') {
+        resolve(data.text);
+      }
+    });
+  });
+}
+
+//escapeHtml function version 1.0.0
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+  }
+
+fetchTextPrompt().then((text) => {
+  textPrompt = escapeHtml(text); // Escape special characters in the text prompt
+  setTimeout(() => {
+    startAnimation();
+  }, 1000);
+});
+
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      startAnimation();
+    } else {
+      stopAnimation();
+    }
+  });
+</script>
+</body>
+</html>
