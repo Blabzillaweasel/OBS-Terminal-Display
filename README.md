@@ -10,7 +10,8 @@ Step 4. 	Open controller.html\
 Step 5. 	Open OBS\
 Step 6.		Add browser source\
 Step 7. 	Select display.html\
-Step 8. 	Set windows resolution to your desired settings (Avoid resizing by dragging, only resize by changing the properties)\
+Step 8. 	Set windows resolution to your desired settings\
+_(Avoid resizing by dragging, only resize by changing the properties)_\
 
 **RUNNING THE SOFTWARE**\
 Step 1.	Double click startServer.bat\
