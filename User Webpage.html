@@ -65,15 +65,6 @@
     height: 100%;
     width: 100%;
   }
-  /* Add checked indicator */
-  #loop-checkbox:checked ~ #loop-label::after {
-    content: '✓';
-    position: absolute;
-    font-size: 24px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
   #loop-label {
     font-size: 18px;
   }
@@ -89,7 +80,7 @@
       <div>
 <div class="custom-checkbox">
   <input type="checkbox" id="loop-checkbox">
-  <label for="loop-checkbox" id="loop-label">Loop</label>
+  <label for="loop-checkbox" id="loop-label">Enable loop mode</label>
 </div>
 <button id="submit-text" class="action-button">Submit</button>
 
@@ -101,9 +92,11 @@
     const inputText = document.getElementById('input-text');
     const submitText = document.getElementById('submit-text');
     const loopCheckbox = document.getElementById('loop-checkbox');
+	const loopLabel = document.getElementById('loop-label');
     const stopLoop = document.getElementById('stop-loop');
     const clearDisplay = document.getElementById('clear-display');
     let loopEnabled = false;
+	
 
     const ws = new WebSocket('ws://localhost:8080');
 
@@ -115,10 +108,16 @@
       ws.send(JSON.stringify({ type: 'text', text: inputText.value, loop: loopEnabled }));
     });
 
-    loopCheckbox.addEventListener('change', () => {
-      loopEnabled = loopCheckbox.checked;
-      ws.send(JSON.stringify({ type: 'toggle_loop', loop: loopEnabled }));
-    });
+loopCheckbox.addEventListener('change', () => {
+  loopEnabled = loopCheckbox.checked;
+  ws.send(JSON.stringify({ type: 'toggle_loop', loop: loopEnabled }));
+
+  if (loopCheckbox.checked) {
+    loopLabel.textContent = 'Disable loop mode';
+  } else {
+    loopLabel.textContent = 'Enable loop mode';
+  }
+});
 
     stopLoop.addEventListener('click', () => {
       ws.send(JSON.stringify({ type: 'stop_loop' }));
