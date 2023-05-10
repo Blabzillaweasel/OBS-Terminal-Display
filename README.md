@@ -1,7 +1,7 @@
 # OBS Terminal Display
  An html + js setup that displays user submitted text in a manner similar to that of a Unix terminal.
 
-**FIRST INSTALLATION AND RUN:**
+**INSTALLATION:**
 
 Step 1. 	Download and install Node.js from the official website: https://nodejs.org/en/download/\
 Step 2.		Double click npminstall.bat\
@@ -11,9 +11,8 @@ Step 5. 	Open OBS\
 Step 6.		Add browser source\
 Step 7. 	Select display.html\
 Step 8. 	Set windows resolution to your desired settings (Avoid resizing by dragging, only resize by changing the properties)\
-Step 9.	Enter desired text on controller.html website\
 
-**AFTER INITIAL INSTALL**\
+**RUNNING THE SOFTWARE**\
 Step 1.	Double click startServer.bat\
 Step 2.	Open controller.html\
 Step 3.	Disable and re-enable the display.html browser source in OBS\
