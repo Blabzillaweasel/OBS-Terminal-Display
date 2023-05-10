@@ -37,22 +37,48 @@
     width: calc(1/4 * 100%);
   }
   .action-button {
-    height: 100px; /* Change height to 100px */
+    height: 100px;
     width: 100%;
     font-size: 18px;
-    margin-bottom: 40px; /* Change margin-bottom to 40px */
+    margin-bottom: 40px;
   }
   .action-button:last-child {
-    margin-bottom: 0; /* Add rule for the last child */
+    margin-bottom: 0;
+  }
+  /* Add custom-checkbox styles */
+  .custom-checkbox {
+    position: relative;
+    height: 100px;
+    width: 100%;
+    background-color: #202225;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 40px;
   }
   #loop-checkbox {
-    margin-bottom: 10px;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+  }
+  /* Add checked indicator */
+  #loop-checkbox:checked ~ #loop-label::after {
+    content: '✓';
+    position: absolute;
+    font-size: 24px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   #loop-label {
     font-size: 18px;
-    margin-bottom: 20px;
   }
 </style>
+
 
 
 </head>
@@ -61,10 +87,12 @@
     <textarea id="input-text"></textarea>
     <div id="button-container">
       <div>
-        <input type="checkbox" id="loop-checkbox">
-        <label for="loop-checkbox" id="loop-label">Loop</label>
-      </div>
-      <button id="submit-text" class="action-button">Submit</button>
+<div class="custom-checkbox">
+  <input type="checkbox" id="loop-checkbox">
+  <label for="loop-checkbox" id="loop-label">Loop</label>
+</div>
+<button id="submit-text" class="action-button">Submit</button>
+
       <button id="stop-loop" class="action-button">Stop</button>
       <button id="clear-display" class="action-button">Clear</button>
     </div>
