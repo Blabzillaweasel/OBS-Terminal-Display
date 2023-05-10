@@ -4,11 +4,11 @@
 FIRST INSTALLATION AND RUN:
 
 Step 1. 	Download and install Node.js from the official website: https://nodejs.org/en/download/
-Step 2.	Double click npminstall.bat
+Step 2.		Double click npminstall.bat
 Step 3. 	Double click startServer.bat
 Step 4. 	Open controller.html
 Step 5. 	Open OBS
-Step 6 	Add browser source
+Step 6.		Add browser source
 Step 7. 	Select display.html
 Step 8. 	Set windows resolution to your desired settings
 		(Avoid resizing by dragging, only resize by changing the properties)
