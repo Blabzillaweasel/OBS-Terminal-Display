@@ -2,7 +2,7 @@
  An html + js setup that displays user submitted text in a manner similar to that of a Unix terminal.
 
 **INSTALLATION:**\
-Step 1. 	Download and install Node.js from the official website: https://nodejs.org/en/download/\
+Step 1. 	Download and install Node.js from the official website: https://nodejs.org/en/download/ \
 Step 2.		Double click npminstall.bat\
 Step 3. 	Double click startServer.bat\
 Step 4. 	Open controller.html\
