@@ -49,7 +49,7 @@
   let animationInterval;
   let previousText = '';
 
-// updateText function version 1.2.2
+// updateText function version 1.4.0
 function updateText() {
   if (currentIndex <= textPrompt.length) {
     currentText = previousText + textPrompt.slice(0, currentIndex);
@@ -58,6 +58,9 @@ function updateText() {
     }
     textContainer.innerHTML = currentText;
     currentIndex++;
+  } else if (loopEnabled) {
+    previousText = currentText + '\n\n'; // Treat the next iteration as a new prompt
+    currentIndex = 0;
   }
 
   // Update cursor position after text update with a slight delay
@@ -65,7 +68,6 @@ function updateText() {
     requestAnimationFrame(updateCursorPosition);
   }, 0);
 }
-
 
 // updateCursorPosition function version 1.1.1
 function updateCursorPosition() {
@@ -117,7 +119,7 @@ ws.addEventListener('open', () => {
   ws.send(JSON.stringify({ type: 'register', role: 'display' }));
 });
 
-// WebSocket listener version 1.0.8
+// WebSocket listener version 1.1.0
 ws.addEventListener('message', (event) => {
   const data = JSON.parse(event.data);
   if (data.type === 'text') {
@@ -127,8 +129,20 @@ ws.addEventListener('message', (event) => {
     textPrompt = data.text.replace(/<(?!br)/gi, '<\u200B'); // Add a zero-width space after '<' symbols in the text, except for '<br>'
     textPrompt = textPrompt.replace(/<br\s*\/?>/gi, '\n'); // Replace <br> and <br/> tags with newline characters
     currentIndex = 0;
+    loopEnabled = data.loop;
+  } else if (data.type === 'stop_loop') {
+    loopEnabled = false;
+  } else if (data.type === 'clear_display') {
+    stopAnimation();
+    previousText = '';
+    currentText = '';
+    textContainer.innerHTML = '';
+    setTimeout(() => {
+      requestAnimationFrame(updateCursorPosition);
+    }, 0);
   }
 });
+
 
 
 

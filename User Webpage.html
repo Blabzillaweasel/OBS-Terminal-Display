@@ -4,55 +4,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controller</title>
-  <style>
-    body {
-      background-color: #36393f;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-    #input-container {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: center;
-      height: 100vh;
-      padding: 20px;
-    }
-    #input-text {
-      flex: 1;
-      height: calc(100vh - 150px);
-      width: 100%;
-      max-width: 100%;
-      background-color: #202225;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      padding: 10px;
-      font-size: 18px;
-    }
-    #submit-text {
-      height: 100px;
-      width: 100%;
-      max-width: 100%;
-      background-color: #7289da;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 24px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-  </style>
+<style>
+  body {
+    background-color: #36393f;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  #input-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+  }
+  #input-text {
+    flex: 1;
+    height: calc(100vh - 60px);
+    width: 100%;
+    max-width: 100%;
+    background-color: #202225;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 18px;
+  }
+  #button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    padding-left: 20px;
+    width: calc(1/4 * 100%);
+  }
+  .action-button {
+    height: 100px;
+    width: 100%;
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+  .action-button:last-child {
+    margin-bottom: 0;
+  }
+  /* Add custom-checkbox styles */
+  .custom-checkbox {
+    position: relative;
+    height: 100px;
+    width: 100%;
+    background-color: #202225;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 40px;
+  }
+  #loop-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+  }
+  #loop-label {
+    font-size: 18px;
+  }
+</style>
+
+
+
 </head>
 <body>
   <div id="input-container">
     <textarea id="input-text"></textarea>
-    <button id="submit-text">Submit</button>
+    <div id="button-container">
+      <div>
+<div class="custom-checkbox">
+  <input type="checkbox" id="loop-checkbox">
+  <label for="loop-checkbox" id="loop-label">Enable loop mode</label>
+</div>
+<button id="submit-text" class="action-button">Submit</button>
+
+      <button id="stop-loop" class="action-button">Stop</button>
+      <button id="clear-display" class="action-button">Clear</button>
+    </div>
   </div>
   <script>
     const inputText = document.getElementById('input-text');
     const submitText = document.getElementById('submit-text');
+    const loopCheckbox = document.getElementById('loop-checkbox');
+	const loopLabel = document.getElementById('loop-label');
+    const stopLoop = document.getElementById('stop-loop');
+    const clearDisplay = document.getElementById('clear-display');
+    let loopEnabled = false;
+	
 
     const ws = new WebSocket('ws://localhost:8080');
 
@@ -61,8 +105,28 @@
     });
 
     submitText.addEventListener('click', () => {
-      ws.send(JSON.stringify({ type: 'text', text: inputText.value }));
+      ws.send(JSON.stringify({ type: 'text', text: inputText.value, loop: loopEnabled }));
+    });
+
+loopCheckbox.addEventListener('change', () => {
+  loopEnabled = loopCheckbox.checked;
+  ws.send(JSON.stringify({ type: 'toggle_loop', loop: loopEnabled }));
+
+  if (loopCheckbox.checked) {
+    loopLabel.textContent = 'Disable loop mode';
+  } else {
+    loopLabel.textContent = 'Enable loop mode';
+  }
+});
+
+    stopLoop.addEventListener('click', () => {
+      ws.send(JSON.stringify({ type: 'stop_loop' }));
+    });
+
+    clearDisplay.addEventListener('click', () => {
+      ws.send(JSON.stringify({ type: 'clear_display' }));
     });
   </script>
 </body>
+
 </html>
